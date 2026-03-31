@@ -1,0 +1,22 @@
+name: "code-review-agent"
+version: "1.0.0"
+description: "An OpenEnv environment where an AI acts as a senior engineer reviewing Pull Requests, identifying bugs, security flaws, and architectural issues."
+
+tasks:
+  - id: "task_1_easy_obvious_bug"
+    name: "Spot the Off-By-One"
+    difficulty: "easy"
+    description: "Review a Python function and identify the off-by-one error in the pagination loop."
+    expected_max_score: 1.0
+
+  - id: "task_2_medium_multi_issue"
+    name: "The Messy PR"
+    difficulty: "medium"
+    description: "Review a PR with three issues: unused import, SQL injection vulnerability, and a None comparison bug."
+    expected_max_score: 1.0
+
+  - id: "task_3_hard_architecture"
+    name: "The N+1 Nightmare"
+    difficulty: "hard"
+    description: "Identify a hidden N+1 query performance bottleneck and a commit ordering race condition."
+    expected_max_score: 1.0
