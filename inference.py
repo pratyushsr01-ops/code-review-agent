@@ -1,8 +1,10 @@
 import os
 import json
+import time
+import sys
 from openai import OpenAI
 from env.environment import CodeReviewEnv
-from env.models import Action, Finding
+from env.models import Action
 
 API_BASE_URL = os.environ.get("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.environ.get("MODEL_NAME", "moonshotai/Kimi-K2-Instruct-0905")
@@ -30,8 +32,10 @@ Analyze the pull request and return a JSON object with this exact structure:
 }
 Return ONLY the JSON. No markdown, no extra text."""
 
-
 def run_task(task_id: str) -> float:
+    # 🚨 MANDATORY START LOG
+    print(f"[START] task_id={task_id} model={MODEL_NAME}")
+    
     env = CodeReviewEnv(task_id=task_id)
     obs = env.reset()
 
@@ -44,6 +48,9 @@ PR Description: {obs.pr_description}
 {files_text}
 
 Review this PR and identify all issues."""
+
+    total_reward = 0.0
+    step_count = 0
 
     try:
         response = client.chat.completions.create(
@@ -58,15 +65,26 @@ Review this PR and identify all issues."""
         cleaned_raw = raw.replace("```json", "").replace("```", "").strip()
         data = json.loads(cleaned_raw)
         action = Action(**data)
+        
+        result = env.step(action)
+        reward = result["reward"]
+        done = result.get("done", True) # Ensures done is captured
+        total_reward = reward
+        step_count = 1
+        
+        # 🚨 MANDATORY STEP LOG
+        print(f"[STEP] action={json.dumps(data)} reward={reward} done={done}")
+        
     except Exception as e:
         print(f"[{task_id}] Error: {e}")
-        return 0.0
+        total_reward = 0.0
+        step_count = 1
+        # Fallback log to prevent parser crash on error
+        print(f"[STEP] action={{\"error\": \"{str(e)}\"}} reward=0.0 done=True")
 
-    result = env.step(action)
-    score = result["reward"]
-    print(f"[{task_id}] Score: {score} — {result['info']['message']}")
-    return score
-
+    # 🚨 MANDATORY END LOG
+    print(f"[END] total_reward={total_reward} steps={step_count}")
+    return total_reward
 
 if __name__ == "__main__":
     print("Running baseline inference...\n")
@@ -74,5 +92,8 @@ if __name__ == "__main__":
     for task in TASKS:
         score = run_task(task)
         total += score
+        time.sleep(1) # Small delay for clean logs
+        
     avg = round(total / len(TASKS), 2)
     print(f"\nAverage score: {avg}")
+    sys.stdout.flush() # Forces logs to output before timeout
