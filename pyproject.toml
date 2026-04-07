@@ -17,4 +17,5 @@ dependencies = [
 ]
 
 [project.scripts]
-server = "server.app:app"
+# FIX: Points to the main function now
+server = "server.app:main"
