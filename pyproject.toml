@@ -1,14 +1,20 @@
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build_meta"
 
 [project]
 name = "code-review-agent"
-version = "1.0.0"
-description = "An OpenEnv environment for AI code reviews"
+version = "0.1.0"
+description = "AI Senior Engineer Code Review Environment"
+readme = "README.md"
+requires-python = ">=3.11"
 dependencies = [
     "fastapi",
     "uvicorn",
     "pydantic",
-    "openai"
+    "openai",
+    "openenv-core>=0.2.0"
 ]
+
+[project.scripts]
+server = "server.app:app"
