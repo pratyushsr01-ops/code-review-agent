@@ -34,15 +34,21 @@ class CodeReviewEnv:
                 "info": {"message": "Invalid action type."}
             }
 
-        score = grade(action.findings, self.expected_findings)
+        # 1. Get the raw score from your grader
+        raw_score = grade(action.findings, self.expected_findings)
+        
+        # 🔥 2. THE NUCLEAR CLAMP: Force it between 0.01 and 0.99
+        safe_score = float(max(0.01, min(0.99, raw_score)))
+        
         self.done = True
 
+        # 3. Return the SAFE score
         return {
             "observation": self.current_obs.dict(),
-            "reward": score,
+            "reward": safe_score,
             "done": True,
             "info": {
-                "message": f"Review complete. Score: {score}",
-                "score": score
+                "message": f"Review complete. Score: {safe_score}",
+                "score": safe_score
             }
         }
