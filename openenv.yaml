@@ -11,16 +11,16 @@ tasks:
     name: "Spot the Off-By-One"
     difficulty: easy
     description: "Identify the off-by-one error."
-    expected_max_score: 1.0
+    expected_max_score: 0.99
 
   - id: task_2_medium_multi_issue
     name: "The Messy PR"
     difficulty: medium
     description: "Identify unused import, SQL injection, and None bug."
-    expected_max_score: 1.0
+    expected_max_score: 0.99
 
   - id: task_3_hard_architecture
     name: "The N+1 Nightmare"
     difficulty: hard
     description: "Identify N+1 query and race condition."
-    expected_max_score: 1.0
+    expected_max_score: 0.99
