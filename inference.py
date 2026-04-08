@@ -77,10 +77,10 @@ Review this PR and identify all issues."""
         
     except Exception as e:
         print(f"[{task_id}] Error: {e}")
-        total_reward = 0.0
+        total_reward = 0.01
         step_count = 1
         # Fallback log to prevent parser crash on error
-        print(f"[STEP] action={{\"error\": \"{str(e)}\"}} reward=0.0 done=True")
+        print(f"[STEP] action={{\"error\": \"{str(e)}\"}} reward=0.01 done=True")
 
     # 🚨 MANDATORY END LOG
     print(f"[END] total_reward={total_reward} steps={step_count}")

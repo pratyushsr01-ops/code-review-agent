@@ -29,7 +29,7 @@ class CodeReviewEnv:
         if action.action_type != "submit_review":
             return {
                 "observation": self.current_obs.dict(),
-                "reward": 0.0,
+                "reward": 0.01,
                 "done": False,
                 "info": {"message": "Invalid action type."}
             }

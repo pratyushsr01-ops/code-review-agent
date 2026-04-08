@@ -25,4 +25,4 @@ def grade(findings: List[Finding], expected_findings: list) -> float:
     false_positives = len(findings) - matched
     base_score = matched / total if total > 0 else 0.0
     final_score = base_score - (0.2 * false_positives)
-    return max(0.0, min(1.0, round(final_score, 2)))
+    return max(0.01, min(0.99, round(final_score, 2)))
