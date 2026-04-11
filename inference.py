@@ -89,6 +89,6 @@ if __name__ == "__main__":
         total += score
         time.sleep(1) # Small delay for clean logs
         
-    avg = round(total / len(TASKS), 2)
+    avg = sanitize_score(total / len(TASKS))
     print(f"\nAverage score: {avg}")
     sys.stdout.flush() # Forces logs to output before timeout
