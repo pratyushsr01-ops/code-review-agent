@@ -1,6 +1,14 @@
 from typing import List
 from .models import Finding
 
+MIN_STRICT_SCORE = 0.01
+MAX_STRICT_SCORE = 0.99
+
+
+def sanitize_score(score: float) -> float:
+    """Clamp scores to the validator-safe open interval (0, 1)."""
+    return max(MIN_STRICT_SCORE, min(MAX_STRICT_SCORE, round(score, 2)))
+
 
 def grade_finding(finding: Finding, expected: dict) -> bool:
     line_match = abs(finding.line_number - expected["line"]) <= 1
@@ -23,6 +31,6 @@ def grade(findings: List[Finding], expected_findings: list) -> float:
                 break
 
     false_positives = len(findings) - matched
-    base_score = matched / total if total > 0 else 0.0
+    base_score = matched / total if total > 0 else MIN_STRICT_SCORE
     final_score = base_score - (0.2 * false_positives)
-    return max(0.01, min(0.99, round(final_score, 2)))
+    return sanitize_score(final_score)

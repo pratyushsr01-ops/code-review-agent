@@ -22,4 +22,4 @@ class Action(BaseModel):
 
 class Reward(BaseModel):
     score: float
-    max_score: float = 1.0
+    max_score: float = 0.99

@@ -1,6 +1,6 @@
 from .models import Observation, Action
 from .tasks import TASKS
-from .graders import grade
+from .graders import grade, sanitize_score, MIN_STRICT_SCORE
 from typing import Dict, Any
 
 class CodeReviewEnv:
@@ -31,18 +31,18 @@ class CodeReviewEnv:
             self.done = True
             return {
                 "observation": self.current_obs.dict(),
-                "reward": 0.01,
+                "reward": MIN_STRICT_SCORE,
                 "done": True, 
                 "info": {
                     "message": "Invalid action type.",
-                    "score": 0.01 
+                    "score": MIN_STRICT_SCORE 
                 }
             }
 
         # 1. Get the score from the grader
         raw_score = grade(action.findings, self.expected_findings)
         
-        safe_score = float(max(0.01, min(0.99, raw_score)))
+        safe_score = float(sanitize_score(raw_score))
         
         self.done = True
 

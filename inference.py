@@ -4,6 +4,7 @@ import time
 import sys
 from openai import OpenAI
 from env.environment import CodeReviewEnv
+from env.graders import MIN_STRICT_SCORE, sanitize_score
 from env.models import Action
 
 API_BASE_URL = os.environ.get("API_BASE_URL", "https://router.huggingface.co/v1")
@@ -35,7 +36,7 @@ Return ONLY the JSON. No markdown, no extra text."""
 def run_task(task_id: str) -> float:
     print(f"[START] task_id={task_id} model={MODEL_NAME}")
     
-    total_reward = 0.01 
+    total_reward = MIN_STRICT_SCORE 
     step_count = 0
     
     try:
@@ -65,17 +66,17 @@ def run_task(task_id: str) -> float:
         
         reward = result["reward"]
         done = result.get("done", True) 
-        total_reward = reward
+        total_reward = sanitize_score(reward)
         step_count = 1
         
         print(f"[STEP] action={json.dumps(data)} reward={reward} done={done}")
         
     except Exception as e:
         print(f"[{task_id}] Error: {e}")
-        total_reward = 0.01
+        total_reward = MIN_STRICT_SCORE
         step_count = 1
         # Fallback log to prevent parser crash on error
-        print(f"[STEP] action={{\"error\": \"{str(e)}\"}} reward=0.01 done=True")
+        print(f"[STEP] action={{\"error\": \"{str(e)}\"}} reward={MIN_STRICT_SCORE} done=True")
 
     print(f"[END] total_reward={total_reward} steps={step_count}")
     return total_reward

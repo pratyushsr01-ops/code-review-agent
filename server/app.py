@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional, Dict, Any
 from pydantic import BaseModel
 from env.environment import CodeReviewEnv
+from env.graders import MIN_STRICT_SCORE, sanitize_score
 from env.models import Action
 
 app = FastAPI(title="Code Review Agent - OpenEnv")
@@ -54,11 +55,11 @@ async def step(request: Request):
         obs_dict = active_env.current_obs.dict() if hasattr(active_env, 'current_obs') else {}
         return {
             "observation": obs_dict,
-            "reward": 0.01,
+            "reward": MIN_STRICT_SCORE,
             "done": True,
             "info": {
                 "message": f"Server caught exception: {str(e)}",
-                "score": 0.01
+                "score": sanitize_score(MIN_STRICT_SCORE)
             }
         }
 
