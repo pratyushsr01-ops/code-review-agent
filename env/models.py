@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Literal
 
 class PRFile(BaseModel):
@@ -21,5 +21,15 @@ class Action(BaseModel):
     findings: List[Finding]
 
 class Reward(BaseModel):
-    score: float
-    max_score: float = 0.99
+    score: float = Field(..., gt=0.0, lt=1.0)
+    max_score: float = Field(default=0.999999, gt=0.0, lt=1.0)
+
+    @field_validator("score", "max_score", mode="before")
+    @classmethod
+    def keep_scores_strictly_in_range(cls, value: float) -> float:
+        numeric = float(value)
+        if numeric <= 0.0:
+            return 0.000001
+        if numeric >= 1.0:
+            return 0.999999
+        return round(numeric, 6)

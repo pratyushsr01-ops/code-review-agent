@@ -1,6 +1,5 @@
 import uvicorn
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 from typing import Optional, Dict, Any
 from pydantic import BaseModel
 from env.environment import CodeReviewEnv
@@ -13,6 +12,10 @@ active_env: Optional[CodeReviewEnv] = None
 
 class ResetRequest(BaseModel):
     task_id: Optional[str] = "task_1_easy_obvious_bug"
+
+class GradeRequest(BaseModel):
+    task_id: Optional[str] = "task_1_easy_obvious_bug"
+    action: Action
 
 @app.get("/")
 def root():
@@ -36,6 +39,16 @@ def state():
     if not active_env:
         active_env = CodeReviewEnv()
     return active_env.state().dict()
+
+@app.get("/tasks")
+def tasks():
+    return {
+        "tasks": [
+            "task_1_easy_obvious_bug",
+            "task_2_medium_multi_issue",
+            "task_3_hard_architecture",
+        ]
+    }
 
 # Catch unexpected crashes and return a safe fallback score
 @app.post("/step")
@@ -61,6 +74,29 @@ async def step(request: Request):
                 "message": f"Server caught exception: {str(e)}",
                 "score": sanitize_score(MIN_STRICT_SCORE)
             }
+        }
+
+@app.post("/grade")
+def grade(req: GradeRequest):
+    """One-shot grading endpoint for validators that probe graders directly."""
+    global active_env
+    try:
+        active_env = CodeReviewEnv(task_id=req.task_id or "task_1_easy_obvious_bug")
+        active_env.reset()
+        result = active_env.step(req.action)
+        result["reward"] = sanitize_score(result.get("reward", MIN_STRICT_SCORE))
+        if "info" in result and "score" in result["info"]:
+            result["info"]["score"] = sanitize_score(result["info"]["score"])
+        return result
+    except Exception as e:
+        return {
+            "observation": {},
+            "reward": MIN_STRICT_SCORE,
+            "done": True,
+            "info": {
+                "message": f"Grade endpoint caught exception: {str(e)}",
+                "score": MIN_STRICT_SCORE,
+            },
         }
 
 def main():

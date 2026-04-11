@@ -1,8 +1,8 @@
 from typing import List
 from .models import Finding
 
-MIN_STRICT_SCORE = 0.01
-MAX_STRICT_SCORE = 0.99
+MIN_STRICT_SCORE = 0.000001
+MAX_STRICT_SCORE = 0.999999
 
 
 def sanitize_score(score: float) -> float:
