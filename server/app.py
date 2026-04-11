@@ -36,7 +36,7 @@ def state():
         active_env = CodeReviewEnv()
     return active_env.state().dict()
 
-# 🔥 THE SHIELD: Catch FastAPI 422 crashes and return a safe 0.01
+# Catch unexpected crashes and return a safe fallback score
 @app.post("/step")
 async def step(request: Request):
     global active_env
@@ -49,7 +49,7 @@ async def step(request: Request):
         action = Action(**body)
         return active_env.step(action)
     except Exception as e:
-        # If the validator sends garbage, we intercept the crash and return 0.01!
+        # Handle invalid requests gracefully
         active_env.done = True
         obs_dict = active_env.current_obs.dict() if hasattr(active_env, 'current_obs') else {}
         return {

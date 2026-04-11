@@ -28,12 +28,12 @@ security issues, and architectural problems.
 | task_3_hard_architecture | Hard | 2 — N+1 query, commit ordering bug |
 
 ## Reward
-Partial credit per issue: `score = matched / total` (0.0–1.0)
+Partial credit per issue: `score = matched / total`, clamped to strictly between 0 and 1 (0.01–0.99).
 
 ## Baseline Scores
 | Task | Score |
 |------|-------|
-| task_1 | 1.0 |
+| task_1 | 0.99 |
 | task_2 | 0.67 |
 | task_3 | 0.5 |
 | **Average** | **0.72** |

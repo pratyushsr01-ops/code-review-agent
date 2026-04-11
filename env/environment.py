@@ -27,7 +27,6 @@ class CodeReviewEnv:
 
     def step(self, action: Action) -> Dict[str, Any]:
         
-        # 🔥 THE FIX IS RIGHT HERE: changed done to True and added "score" to info
         if action.action_type != "submit_review":
             self.done = True
             return {
@@ -40,15 +39,13 @@ class CodeReviewEnv:
                 }
             }
 
-        # 1. Get the raw score from your grader
+        # 1. Get the score from the grader
         raw_score = grade(action.findings, self.expected_findings)
         
-        # 2. THE NUCLEAR CLAMP: Force it between 0.01 and 0.99
         safe_score = float(max(0.01, min(0.99, raw_score)))
         
         self.done = True
 
-        # 3. Return the SAFE score
         return {
             "observation": self.current_obs.dict(),
             "reward": safe_score,

@@ -33,10 +33,8 @@ Analyze the pull request and return a JSON object with this exact structure:
 Return ONLY the JSON. No markdown, no extra text."""
 
 def run_task(task_id: str) -> float:
-    # 🚨 MANDATORY START LOG
     print(f"[START] task_id={task_id} model={MODEL_NAME}")
     
-    # 🔥 FIX: Start with 0.01 so an early crash NEVER logs 0.0
     total_reward = 0.01 
     step_count = 0
     
@@ -65,13 +63,11 @@ def run_task(task_id: str) -> float:
         
         result = env.step(action)
         
-        # 🔥 FIX: Double clamp the reward printed to the validator logs
-        reward = float(max(0.01, min(0.99, result["reward"])))
+        reward = result["reward"]
         done = result.get("done", True) 
         total_reward = reward
         step_count = 1
         
-        # 🚨 MANDATORY STEP LOG
         print(f"[STEP] action={json.dumps(data)} reward={reward} done={done}")
         
     except Exception as e:
@@ -81,13 +77,12 @@ def run_task(task_id: str) -> float:
         # Fallback log to prevent parser crash on error
         print(f"[STEP] action={{\"error\": \"{str(e)}\"}} reward=0.01 done=True")
 
-    # 🚨 MANDATORY END LOG
     print(f"[END] total_reward={total_reward} steps={step_count}")
     return total_reward
 
 if __name__ == "__main__":
     print("Running baseline inference...\n")
-    total = 0.01 # 🔥 FIX: Also changed this from 0.0 to 0.01 just in case
+    total = 0.0
     for task in TASKS:
         score = run_task(task)
         total += score
