@@ -22,14 +22,14 @@ class Action(BaseModel):
 
 class Reward(BaseModel):
     score: float = Field(..., gt=0.0, lt=1.0)
-    max_score: float = Field(default=0.999999, gt=0.0, lt=1.0)
+    max_score: float = Field(default=0.99, gt=0.0, lt=1.0)
 
     @field_validator("score", "max_score", mode="before")
     @classmethod
     def keep_scores_strictly_in_range(cls, value: float) -> float:
         numeric = float(value)
         if numeric <= 0.0:
-            return 0.000001
+            return 0.01
         if numeric >= 1.0:
-            return 0.999999
-        return round(numeric, 6)
+            return 0.99
+        return round(numeric, 2)

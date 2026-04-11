@@ -12,21 +12,21 @@ tasks:
     difficulty: easy
     description: "Identify the off-by-one error."
     max_steps: 1
-    expected_max_score: 0.999999
+    expected_max_score: 0.99
 
   - id: task_2_medium_multi_issue
     name: "The Messy PR"
     difficulty: medium
     description: "Identify unused import, SQL injection, and None bug."
     max_steps: 1
-    expected_max_score: 0.999999
+    expected_max_score: 0.99
 
   - id: task_3_hard_architecture
     name: "The N+1 Nightmare"
     difficulty: hard
     description: "Identify N+1 query and race condition."
     max_steps: 1
-    expected_max_score: 0.999999
+    expected_max_score: 0.99
 
 observation_space:
   type: object
@@ -43,8 +43,8 @@ action_space:
     findings: array
 
 reward_range:
-  low: 0.000001
-  high: 0.999999
+  low: 0.01
+  high: 0.99
 
 endpoints:
   reset: POST /reset

@@ -1,13 +1,18 @@
 from typing import List
 from .models import Finding
 
-MIN_STRICT_SCORE = 0.000001
-MAX_STRICT_SCORE = 0.999999
+MIN_STRICT_SCORE = 0.01
+MAX_STRICT_SCORE = 0.95
 
 
 def sanitize_score(score: float) -> float:
     """Clamp scores to the validator-safe open interval (0, 1)."""
     return max(MIN_STRICT_SCORE, min(MAX_STRICT_SCORE, round(score, 2)))
+
+
+def format_score(score: float) -> str:
+    """Render scores without scientific notation for log parsers."""
+    return f"{sanitize_score(score):.2f}"
 
 
 def grade_finding(finding: Finding, expected: dict) -> bool:

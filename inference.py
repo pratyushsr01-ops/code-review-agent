@@ -4,7 +4,7 @@ import time
 import sys
 from openai import OpenAI
 from env.environment import CodeReviewEnv
-from env.graders import MIN_STRICT_SCORE, sanitize_score
+from env.graders import MIN_STRICT_SCORE, sanitize_score, format_score
 from env.models import Action
 
 API_BASE_URL = os.environ.get("API_BASE_URL", "https://router.huggingface.co/v1")
@@ -69,16 +69,16 @@ def run_task(task_id: str) -> float:
         total_reward = sanitize_score(reward)
         step_count = 1
         
-        print(f"[STEP] action={json.dumps(data)} reward={reward} done={done}")
+        print(f"[STEP] action={json.dumps(data)} reward={format_score(reward)} done={done}")
         
     except Exception as e:
         print(f"[{task_id}] Error: {e}")
         total_reward = MIN_STRICT_SCORE
         step_count = 1
         # Fallback log to prevent parser crash on error
-        print(f"[STEP] action={{\"error\": \"{str(e)}\"}} reward={MIN_STRICT_SCORE} done=True")
+        print(f"[STEP] action={{\"error\": \"{str(e)}\"}} reward={format_score(MIN_STRICT_SCORE)} done=True")
 
-    print(f"[END] total_reward={total_reward} steps={step_count}")
+    print(f"[END] total_reward={format_score(total_reward)} steps={step_count}")
     return total_reward
 
 if __name__ == "__main__":
@@ -90,5 +90,5 @@ if __name__ == "__main__":
         time.sleep(1) # Small delay for clean logs
         
     avg = sanitize_score(total / len(TASKS))
-    print(f"\nAverage score: {avg}")
+    print(f"\nAverage score: {format_score(avg)}")
     sys.stdout.flush() # Forces logs to output before timeout

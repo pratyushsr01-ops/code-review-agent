@@ -1,6 +1,6 @@
 from .models import Observation, Action
 from .tasks import TASKS
-from .graders import grade, sanitize_score, MIN_STRICT_SCORE
+from .graders import grade, sanitize_score, format_score, MIN_STRICT_SCORE
 from typing import Dict, Any
 
 class CodeReviewEnv:
@@ -51,7 +51,7 @@ class CodeReviewEnv:
             "reward": safe_score,
             "done": True,
             "info": {
-                "message": f"Review complete. Score: {safe_score}",
+                "message": f"Review complete. Score: {format_score(safe_score)}",
                 "score": safe_score
             }
         }

@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request
 from typing import Optional, Dict, Any
 from pydantic import BaseModel
 from env.environment import CodeReviewEnv
-from env.graders import MIN_STRICT_SCORE, sanitize_score
+from env.graders import MIN_STRICT_SCORE, sanitize_score, format_score
 from env.models import Action
 
 app = FastAPI(title="Code Review Agent - OpenEnv")
